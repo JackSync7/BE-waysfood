@@ -220,12 +220,18 @@ func (h *handlerTransaction) Notification(c echo.Context) error {
 		} else if fraudStatus == "accept" {
 			SendMail("success", transaction)
 			// TODO set transaction status on your database to 'success'
-			h.TransactionRepository.UpdateTransaction("success", order_id)
+			_, err := h.TransactionRepository.UpdateTransaction("success", order_id)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 	} else if transactionStatus == "settlement" {
 		SendMail("success", transaction)
 		// TODO set transaction status on your databaase to 'success'
-		h.TransactionRepository.UpdateTransaction("success", order_id)
+		_, err := h.TransactionRepository.UpdateTransaction("success", order_id)
+		if err != nil {
+			fmt.Println(err)
+		}
 	} else if transactionStatus == "deny" {
 		// TODO you can ignore 'deny', because most of the time it allows payment retries
 		// and later can become success
@@ -246,11 +252,11 @@ func SendMail(status string, transaction models.Transaction) {
 	if status != transaction.Status && (status == "success") {
 		var CONFIG_SMTP_HOST = "smtp.gmail.com"
 		var CONFIG_SMTP_PORT = 587
-		var CONFIG_SENDER_NAME = "Dumbflix <demo.dumbflix@gmail.com>"
+		var CONFIG_SENDER_NAME = "Waysfood <waysfood@gmail.com>"
 		var CONFIG_AUTH_EMAIL = os.Getenv("EMAIL_SYSTEM")
 		var CONFIG_AUTH_PASSWORD = os.Getenv("PASSWORD_SYSTEM")
 
-		var productName = "Subscription Dumbflix"
+		var productName = "Transaction Status"
 		var price = strconv.FormatInt(transaction.TotalPrice, 10)
 
 		mailer := gomail.NewMessage()
