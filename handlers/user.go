@@ -103,14 +103,19 @@ func (h *handler) CreateUser(c echo.Context) error {
 }
 
 func (h *handler) UpdateUser(c echo.Context) error {
-	request := new(usersdto.UpdateUserRequest)
-	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
-	}
-
+	dataFile := c.Get("dataFile").(string)
 	userLogin := c.Get("userLogin")
 	Id := userLogin.(jwt.MapClaims)["id"].(float64)
 	user, err := h.UserRepository.GetUser(int(Id))
+	request := usersdto.UpdateUserRequest{
+		Fullname: c.FormValue("fullname"),
+		Email:    c.FormValue("email"),
+		Image:    dataFile,
+		Phone:    c.FormValue("phone"),
+		Location: c.FormValue("location"),
+		Password: c.FormValue("password"),
+		Gender:   c.FormValue("gender"),
+	}
 	password, err := bcrypt.HashingPassword(request.Password)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
