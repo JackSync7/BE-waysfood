@@ -30,7 +30,6 @@ func main() {
 
 	routes.RouteInit(e.Group("/api/v1"))
 
-	e.Static("/uploads", "./uploads")
 	var PORT = os.Getenv("PORT")
 
 	fmt.Println("Server is runnning on localhost:" + PORT)
