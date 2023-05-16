@@ -127,8 +127,6 @@ func (h *handler) UpdateUser(c echo.Context) error {
 		Image:    resp.SecureURL,
 		Phone:    c.FormValue("phone"),
 		Location: c.FormValue("location"),
-		Password: c.FormValue("password"),
-		Gender:   c.FormValue("gender"),
 	}
 	password, err := bcrypt.HashingPassword(request.Password)
 	if err != nil {
