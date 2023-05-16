@@ -106,6 +106,7 @@ func (h *handler) UpdateUser(c echo.Context) error {
 	dataFile := c.Get("dataFile").(string)
 	userLogin := c.Get("userLogin")
 	Id := userLogin.(jwt.MapClaims)["id"].(float64)
+	fmt.Println(Id)
 	user, err := h.UserRepository.GetUser(int(Id))
 	var ctx = context.Background()
 	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
