@@ -15,7 +15,6 @@ import (
 	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/go-playground/validator/v10"
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
@@ -104,10 +103,9 @@ func (h *handler) CreateUser(c echo.Context) error {
 
 func (h *handler) UpdateUser(c echo.Context) error {
 	dataFile := c.Get("dataFile").(string)
-	userLogin := c.Get("userLogin")
-	Id := userLogin.(jwt.MapClaims)["id"].(float64)
-	fmt.Println(Id)
-	user, err := h.UserRepository.GetUser(int(Id))
+	id, _ := strconv.Atoi(c.Param("id"))
+	fmt.Println(id)
+	user, err := h.UserRepository.GetUser(int(id))
 	var ctx = context.Background()
 	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
 	var API_KEY = os.Getenv("API_KEY")
