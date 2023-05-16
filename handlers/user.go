@@ -5,7 +5,6 @@ import (
 	dto "dumbmerch/dto/result"
 	usersdto "dumbmerch/dto/users"
 	"dumbmerch/models"
-	"dumbmerch/pkg/bcrypt"
 	"dumbmerch/repositories"
 	"fmt"
 	"net/http"
@@ -102,10 +101,10 @@ func (h *handler) CreateUser(c echo.Context) error {
 }
 
 func (h *handler) UpdateUser(c echo.Context) error {
-	dataFile := c.Get("dataFile").(string)
 	id, _ := strconv.Atoi(c.Param("id"))
-	fmt.Println(id)
-	user, err := h.UserRepository.GetUser(int(id))
+	user, err := h.UserRepository.GetUser(id)
+	dataFile := c.Get("dataFile").(string)
+	fmt.Println("this is data file", dataFile)
 	var ctx = context.Background()
 	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
 	var API_KEY = os.Getenv("API_KEY")
@@ -116,48 +115,32 @@ func (h *handler) UpdateUser(c echo.Context) error {
 
 	// Upload file to Cloudinary ...
 	resp, err := cld.Upload.Upload(ctx, dataFile, uploader.UploadParams{Folder: "waysfood"})
-
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+
 	request := usersdto.UpdateUserRequest{
 		Fullname: c.FormValue("fullname"),
 		Email:    c.FormValue("email"),
-		Image:    resp.SecureURL,
 		Phone:    c.FormValue("phone"),
 		Location: c.FormValue("location"),
-	}
-	password, err := bcrypt.HashingPassword(request.Password)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
-	}
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		Image:    resp.SecureURL,
 	}
 
 	if request.Fullname != "" {
 		user.Fullname = request.Fullname
 	}
-
+	if request.Image != "" {
+		user.Image = request.Image
+	}
 	if request.Email != "" {
 		user.Email = request.Email
 	}
-
-	if request.Password != "" {
-		user.Password = password
-	}
-
 	if request.Phone != "" {
 		user.Phone = request.Phone
 	}
-
 	if request.Location != "" {
 		user.Location = request.Location
-	}
-
-	if request.Image != "" {
-		user.Image = request.Image
 	}
 
 	data, err := h.UserRepository.UpdateUser(user)

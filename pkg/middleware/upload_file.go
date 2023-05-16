@@ -32,7 +32,6 @@ func UploadFile(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		data := tempFile.Name()
-		// split uploads/
 
 		c.Set("dataFile", data)
 		return next(c)
