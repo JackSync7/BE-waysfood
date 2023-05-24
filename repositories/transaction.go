@@ -47,7 +47,7 @@ func (r *repository) GetTransaction(ID int) (models.Transaction, error) {
 }
 
 func (r *repository) CreateTransaction(Transaction models.Transaction) (models.Transaction, error) {
-	err := r.db.Preload("Film").Create(&Transaction).Error
+	err := r.db.Create(&Transaction).Error
 
 	return Transaction, err
 }
@@ -60,7 +60,7 @@ func (r *repository) DeleteTransaction(Transaction models.Transaction, ID int) (
 
 func (r *repository) UpdateTransaction(status string, orderId int) (models.Transaction, error) {
 	var transaction models.Transaction
-	r.db.Preload("User").First(&transaction, orderId)
+	r.db.Preload("Buyer").First(&transaction, orderId)
 
 	transaction.Status = status
 	err := r.db.Save(&transaction).Error
